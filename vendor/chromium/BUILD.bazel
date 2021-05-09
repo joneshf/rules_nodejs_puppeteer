@@ -1,0 +1,29 @@
+alias(
+    name = "chromium",
+    actual = select(
+        {
+            "@bazel_tools//src/conditions:darwin": "@chromium_macos//:chrome-mac/Chromium.app/Contents/MacOS/Chromium",
+            "@bazel_tools//src/conditions:linux_x86_64": "@chromium_linux//:chrome-linux/chrome",
+            "@bazel_tools//src/conditions:windows": "@chromium_windows//:chrome-win/chrome.exe",
+        },
+        no_match_error = "No chromium binary set-up for this platform",
+    ),
+    visibility = [
+        "//:__pkg__",
+    ],
+)
+
+alias(
+    name = "files",
+    actual = select(
+        {
+            "@bazel_tools//src/conditions:darwin": "@chromium_macos//:files",
+            "@bazel_tools//src/conditions:linux_x86_64": "@chromium_linux//:files",
+            "@bazel_tools//src/conditions:windows": "@chromium_windows//:files",
+        },
+        no_match_error = "No chromium binary set-up for this platform",
+    ),
+    visibility = [
+        "//:__pkg__",
+    ],
+)

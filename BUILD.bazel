@@ -1,0 +1,34 @@
+load(
+    "@build_bazel_rules_nodejs//:index.bzl",
+    "nodejs_binary",
+    "npm_package_bin",
+)
+
+nodejs_binary(
+    name = "index_js",
+    # N.B. We cannot seem to use `//vendor/chromium` or `//vendor/chromium:files` here since it seems to not work.
+    # It first fails on the filename having spaces,
+    # but there might have been another reason why it would fail even without the file name having spaces.
+    # In order to pass the `chromium` binary down,
+    # we have to wrap this rule in a `npm_package_bin` rule and pass the `chromium` binary as its `data` attribute.
+    data = [
+        "@npm//puppeteer-core",
+    ],
+    entry_point = "index.js",
+)
+
+npm_package_bin(
+    name = "index",
+    outs = [
+        "index.pdf",
+    ],
+    args = [
+        "$(execpath //vendor/chromium)",
+        "$@",
+    ],
+    data = [
+        "//vendor/chromium",
+        "//vendor/chromium:files",
+    ],
+    tool = ":index_js",
+)
